@@ -45,16 +45,19 @@ async function start() {
   // 下载最新代码
   await downFile();
   console.log('下载代码完毕')
-  
-  KEY.split('&').forEach(function(item,index){
-      console.log(item)
+    
+    var keys=KEY.split('&');
+    
+    for(var i=0;i<keys.length;i++){
+        var item=keys[i];
+        console.log(item);
       // 替换变量
       await changeFiele(item);
-      console.log('替换变量完毕')
+      console.log('替换变量完毕');
       // 执行
       await exec("node JD_DailyBonus.js >> result.txt");
-      console.log('执行完毕')
-  })  
+      console.log('执行完毕');
+    }
 
   if (serverJ) {
     const path = "./result.txt";
