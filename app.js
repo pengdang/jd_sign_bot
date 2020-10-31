@@ -9,7 +9,6 @@ const download = require('download')
 
 // 公共变量
 const KEY = process.env.JD_COOKIE
-const KEY1 = process.env.JD_COOKIE1
 const serverJ = process.env.PUSH_KEY
 
 async function downFile () {
@@ -18,12 +17,9 @@ async function downFile () {
     await download(url, './')
 }
 
-async function changeFiele () {
+async function changeFiele (OneKey) {
    let content = await fs.readFileSync('./JD_DailyBonus.js', 'utf8')
-   content = content.replace(/var Key = ''/, `var Key = '${KEY}'`)
-   if(KEY1!=null){
-       content = content.replace(/var DualKey = ''/, `var DualKey = '${KEY1}'`)
-   }
+   content = content.replace(/var Key = ''/, `var Key = '${OneKey}'`)
    await fs.writeFileSync( './JD_DailyBonus.js', content, 'utf8')
 }
 
@@ -49,12 +45,16 @@ async function start() {
   // 下载最新代码
   await downFile();
   console.log('下载代码完毕')
-  // 替换变量
-  await changeFiele();
-  console.log('替换变量完毕')
-  // 执行
-  await exec("node JD_DailyBonus.js >> result.txt");
-  console.log('执行完毕')
+  
+  KEY.split('&').forEach(function(item,index){
+      console.log(item)
+      // 替换变量
+      await changeFiele(item);
+      console.log('替换变量完毕')
+      // 执行
+      await exec("node JD_DailyBonus.js >> result.txt");
+      console.log('执行完毕')
+  })  
 
   if (serverJ) {
     const path = "./result.txt";
