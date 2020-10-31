@@ -17,9 +17,9 @@ async function downFile () {
     await download(url, './')
 }
 
-async function changeFiele (OneKey) {
+async function changeFiele (OldKey,NewKey) {
    let content = await fs.readFileSync('./JD_DailyBonus.js', 'utf8')
-   content = content.replace(/var Key = ''/, `var Key = '${OneKey}'`)
+   content = content.replace(`var Key = '${OldKey}'`, `var Key = '${NewKey}'`)
    await fs.writeFileSync( './JD_DailyBonus.js', content, 'utf8')
 }
 
@@ -47,12 +47,17 @@ async function start() {
   console.log('下载代码完毕')
     
     var keys=KEY.split('&');
+    var oldKey='';
     
     for(var i=0;i<keys.length;i++){
         var item=keys[i];
         console.log(item);
+        
+        if(i>0){
+            oldKey=keys[i-1];
+        }
       // 替换变量
-      await changeFiele(item);
+      await changeFiele(oldKey,item);
       console.log('替换变量完毕');
       // 执行
       await exec("node JD_DailyBonus.js >> result.txt");
